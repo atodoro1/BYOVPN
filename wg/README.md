@@ -118,5 +118,5 @@ $ systemctl status wg-quick@wg*
 ## More Information
 - `wg(8)`
 - `wg-quick(8)` - includes configuration file information
-- (How-to blog)[https://markliversedge.blogspot.com/2023/09/wireguard-setup-for-dummies.html]
-- (`resolvctl` issue)[https://github.com/StreisandEffect/streisand/issues/1434#issuecomment-417792239]
+- [How-to blog](https://markliversedge.blogspot.com/2023/09/wireguard-setup-for-dummies.html)
+- [`resolvctl` issue](https://github.com/StreisandEffect/streisand/issues/1434#issuecomment-417792239)
