@@ -47,7 +47,6 @@ PostUp = iptables -A FORWARD -i wg0 -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -o $IFACE -j MASQUERADE
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o $IFACE -j MASQUERADE
-```
 
 See `wg-quick(8)`.
 
