@@ -1,0 +1,16 @@
+[Interface]
+## Local Address : A private IP address for wg0 interface.
+Address = 10.20.10.2/24
+ListenPort = 33333
+DNS = 8.8.8.8
+
+## local client privateky
+PrivateKey = ${client_private_key}
+
+[Peer]
+# remote server public key
+PublicKey = ${server_public_key}
+# Endpoint = 3.12.84.127:33333
+Endpoint = ${server_public_ip}:${server_listen_port}
+# AllowedIPs = 0.0.0.0/0
+AllowedIPs = ${allowed_ips} # get from ichanzip.com

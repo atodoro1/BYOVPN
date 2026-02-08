@@ -1,0 +1,20 @@
+[Interface]
+## Local Address : A private IP address for wg0 interface.
+Address = 10.20.10.1/24
+ListenPort = 33333
+
+## local server privatekey
+PrivateKey = 
+
+## The PostUp will run when the WireGuard Server starts the virtual VPN tunnel.
+## The PostDown rules run when the WireGuard Server stops the virtual VPN tunnel.
+## Specify the command that allows traffic to leave the server and give the VPN clients access to the Internet.
+PostUp = iptables -A FORWARD -i wg0 -j ACCEPT
+PostUp = iptables -t nat -A POSTROUTING -o ens5 -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
+PostDown = iptables -t nat -D POSTROUTING -o ens5 -j MASQUERADE
+
+[Peer]
+# one client which will be setup to use 10.20.10.2 IP
+PublicKey = 
+AllowedIPs = 10.20.10.2/32
