@@ -56,13 +56,13 @@ PostUp = iptables -t nat -A POSTROUTING -o $IFACE -j MASQUERADE
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o $IFACE -j MASQUERADE
 
-See `wg-quick(8)`.
-
 [Peer]
 # one client which will be setup to use 10.20.10.2 IP
 PublicKey = $CLIENT_PUB
 AllowedIPs = 10.20.10.2/32
 ```
+
+See `wg-quick(8)`.
 
 
 ## 5. Configure the Client
