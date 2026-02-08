@@ -6,21 +6,29 @@ $ apt install -y wireguard wireguard-tools iptables openresolv
 ```
 
 
-## 1. Generate keys for the server
+## 1. Enable IPv4 forwarding on the server
+```bash
+# Server
+sysctl -w net.ipv4.ip_forward=1
+sysctl net.ipv4.ip_forward  # verify
+```
+
+
+## 2. Generate keys for the server
 ```bash
 # Server
 $ wg genkey | tee server-privatekey | wg pubkey > server-publickey
 ```
 
 
-## 2. Generate keys for the client
+## 3. Generate keys for the client
 ```bash
 # Client
 $ wg genkey | tee client-privatekey | wg pubkey > client-publickey
 ```
 
 
-## 3. Configure the Server
+## 4. Configure the Server
 On the server, write the following config file in `/etc/wireguard`.
 - Replace `$SERVER_PRIV` with the server privatekey generated in step 1.
 - Replace `$CLIENT_PUB` with the client publickey generated in step 2.
@@ -57,7 +65,7 @@ AllowedIPs = 10.20.10.2/32
 ```
 
 
-## 4. Configure the Client
+## 5. Configure the Client
 On the client, write the following config file in `/etc/wireguard`.
 - Replace `$CLIENT_PRIV` with the client privatekey generated in step 2.
 - Replace `$SERVER_PUB` with the server publickey generated in step 1.
@@ -86,7 +94,7 @@ AllowedIPs = 0.0.0.0/0
 ```
 
 
-## 5. Start the VPN server and the client
+## 6. Start the VPN server and the client
 On the server, you can bring up the wireguard tunnel either directly with `wg(8)`,
 or as the managed systemd unit `wg-quick@wg*`.
 
@@ -108,7 +116,7 @@ $ wg up ./client.conf
 ```
 
 
-## 6. Verification
+## 7. Verification
 ```bash
 $ wg show
 $ systemctl status wg-quick@wg*
