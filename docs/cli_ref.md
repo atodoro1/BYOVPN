@@ -35,15 +35,15 @@ Add cloud provider API credentials.
 
 **Arguments:**
 
-- `<provider>` - Cloud provider name
-  - Choices: `hetzner`, `digitalocean`, `aws`, `gcp`, `vultr`, `oracle`
+* `<provider>` - Cloud provider name
+  * Choices: `hetzner`, `digitalocean`, `aws`, `gcp`, `vultr`, `oracle`
 
 **Options:**
 
-- `--name <name>` - Friendly name for credential set (default: provider name)
-- `--token <token>` - API token (if not provided, prompts securely)
-- `--from-env` - Read token from environment variable
-- `--test` - Test credentials immediately after adding
+* `--name <name>` - Friendly name for credential set (default: provider name)
+* `--token <token>` - API token (if not provided, prompts securely)
+* `--from-env` - Read token from environment variable
+* `--test` - Test credentials immediately after adding
 
 **Examples:**
 
@@ -79,15 +79,17 @@ vpn auth add aws
 ```
 
 **Where credentials are stored:**
-- macOS: Keychain
-- Linux: Secret Service (gnome-keyring, kwallet)
-- Windows: Credential Manager
+
+* macOS: Keychain
+* Linux: Secret Service (gnome-keyring, kwallet)
+* Windows: Credential Manager
 
 **Security notes:**
-- Credentials encrypted at rest
-- Never logged or displayed
-- Never committed to git
-- Can be rotated without recreating servers
+
+* Credentials encrypted at rest
+* Never logged or displayed
+* Never committed to git
+* Can be rotated without recreating servers
 
 ---
 
@@ -96,8 +98,9 @@ vpn auth add aws
 List all saved cloud provider credentials.
 
 **Options:**
-- `--provider <provider>` - Filter by provider
-- `--format <table|json|yaml>` - Output format (default: table)
+
+* `--provider <provider>` - Filter by provider
+* `--format <table|json|yaml>` - Output format (default: table)
 
 **Examples:**
 
@@ -125,10 +128,12 @@ vpn auth list --provider hetzner --format json
 Remove stored credentials.
 
 **Arguments:**
-- `<name>` - Credential name or ID to remove
+
+* `<name>` - Credential name or ID to remove
 
 **Options:**
-- `--force`, `-f` - Skip confirmation prompt
+
+* `--force`, `-f` - Skip confirmation prompt
 
 **Examples:**
 
@@ -145,9 +150,10 @@ vpn auth remove production --force
 ```
 
 **Notes:**
-- Removing credentials doesn't affect existing servers
-- Servers can still be managed via Pulumi state
-- Can't provision new servers without credentials
+
+* Removing credentials doesn't affect existing servers
+* Servers can still be managed via Pulumi state
+* Can't provision new servers without credentials
 
 ---
 
@@ -156,7 +162,8 @@ vpn auth remove production --force
 Test if credentials are valid and have proper permissions.
 
 **Arguments:**
-- `<name>` - Credential name to test
+
+* `<name>` - Credential name to test
 
 **Examples:**
 
@@ -181,25 +188,30 @@ Create and provision a new VPN server.
 **Options:**
 
 **Provider Selection:**
-- `--provider <name>` - Cloud provider (required if multiple credentials)
-  - Choices: `hetzner`, `digitalocean`, `aws`
-- `--credentials <name>` - Specific credential set to use
+
+* `--provider <name>` - Cloud provider (required if multiple credentials)
+  * Choices: `hetzner`, `digitalocean`, `aws`
+* `--credentials <name>` - Specific credential set to use
 
 **Location:**
-- `--region <region>` - Region/location code (default: auto-select closest)
-- `--list-regions` - Show available regions and exit
+
+* `--region <region>` - Region/location code (default: auto-select closest)
+* `--list-regions` - Show available regions and exit
 
 **Server Size:**
-- `--size <small|medium|large>` - Predefined server size (default: `small`)
-- `--instance-type <type>` - Provider-specific instance type (overrides `--size`)
+
+* `--size <small|medium|large>` - Predefined server size (default: `small`)
+* `--instance-type <type>` - Provider-specific instance type (overrides `--size`)
 
 **Configuration:**
-- `--config <file>` - YAML config file with server settings and apps
-- `--name <name>` - Friendly server name (default: auto-generated)
+
+* `--config <file>` - YAML config file with server settings and apps
+* `--name <name>` - Friendly server name (default: auto-generated)
 
 **Connection:**
-- `--connect` - Connect to VPN immediately after creation
-- `--no-connect` - Don't auto-connect (default)
+
+* `--connect` - Connect to VPN immediately after creation
+* `--no-connect` - Don't auto-connect (default)
 
 **Examples:**
 
@@ -266,13 +278,14 @@ Connect with: vpn connect vpn-nbg1-a4f2b8c9
 List all VPN servers.
 
 **Options:**
-- `--provider <provider>` - Filter by cloud provider
-- `--region <region>` - Filter by region
-- `--status <status>` - Filter by status
-  - Choices: `provisioning`, `ready`, `connected`, `stopped`, `error`
-- `--sort <field>` - Sort by field (default: `created`)
-  - Choices: `created`, `name`, `region`, `cost`, `status`
-- `--format <table|json|yaml>` - Output format (default: table)
+
+* `--provider <provider>` - Filter by cloud provider
+* `--region <region>` - Filter by region
+* `--status <status>` - Filter by status
+  * Choices: `provisioning`, `ready`, `connected`, `stopped`, `error`
+* `--sort <field>` - Sort by field (default: `created`)
+  * Choices: `created`, `name`, `region`, `cost`, `status`
+* `--format <table|json|yaml>` - Output format (default: table)
 
 **Examples:**
 
@@ -306,11 +319,12 @@ vpn list --format json | jq -r '.[] | select(.status=="ready") | .id'
 ```
 
 **Status meanings:**
-- `provisioning` - Being created (pulumi running)
-- `ready` - Running and available to connect
-- `connected` - Currently connected to this server
-- `stopped` - Server stopped but not destroyed
-- `error` - Problem with server (check logs)
+
+* `provisioning` - Being created (pulumi running)
+* `ready` - Running and available to connect
+* `connected` - Currently connected to this server
+* `stopped` - Server stopped but not destroyed
+* `error` - Problem with server (check logs)
 
 ---
 
@@ -319,11 +333,13 @@ vpn list --format json | jq -r '.[] | select(.status=="ready") | .id'
 Show detailed information about a server.
 
 **Arguments:**
-- `<server-id>` - Server ID to show (or use `--current`)
+
+* `<server-id>` - Server ID to show (or use `--current`)
 
 **Options:**
-- `--current` - Show info for currently connected server
-- `--format <table|json|yaml>` - Output format (default: table)
+
+* `--current` - Show info for currently connected server
+* `--format <table|json|yaml>` - Output format (default: table)
 
 **Examples:**
 
@@ -377,12 +393,14 @@ vpn info vpn-nbg1-a4f2 --format json
 Permanently delete a VPN server and all resources.
 
 **Arguments:**
-- `<server-id>` - Server ID to destroy
+
+* `<server-id>` - Server ID to destroy
 
 **Options:**
-- `--force`, `-f` - Skip confirmation prompt
-- `--keep-pulumi` - Don't delete pulumi state files
-- `--disconnect` - Disconnect first if connected (default: true)
+
+* `--force`, `-f` - Skip confirmation prompt
+* `--keep-pulumi` - Don't delete pulumi state files
+* `--disconnect` - Disconnect first if connected (default: true)
 
 **Examples:**
 
@@ -419,18 +437,20 @@ vpn destroy vpn-nbg1-a4f2 --keep-pulumi
 ```
 
 **What gets deleted:**
-- Cloud resources (server, firewall, SSH keys)
-- Local WireGuard config
-- Local SSH keys
-- Pulumi state
-- Database records
-- Connection history
+
+* Cloud resources (server, firewall, SSH keys)
+* Local WireGuard config
+* Local SSH keys
+* Pulumi state
+* Database records
+* Connection history
 
 **What's NOT deleted:**
-- Credentials (reusable for new servers)
-- App catalog
-- User preferences
-- Activity logs
+
+* Credentials (reusable for new servers)
+* App catalog
+* User preferences
+* Activity logs
 
 ---
 
@@ -439,7 +459,8 @@ vpn destroy vpn-nbg1-a4f2 --keep-pulumi
 Start a stopped server. (Later on feature)
 
 **Arguments:**
-- `<server-id>` - Server ID to start
+
+* `<server-id>` - Server ID to start
 
 **Examples:**
 
@@ -464,10 +485,12 @@ Connect with: vpn connect vpn-nbg1-a4f2
 Stop a running server without destroying. (Later on feature)
 
 **Arguments:**
-- `<server-id>` - Server ID to stop
+
+* `<server-id>` - Server ID to stop
 
 **Options:**
-- `--disconnect` - Disconnect VPN first (default: true)
+
+* `--disconnect` - Disconnect VPN first (default: true)
 
 **Examples:**
 
@@ -492,12 +515,14 @@ Note: You will still be charged for storage.
 Connect to a VPN server.
 
 **Arguments:**
-- `[server-id]` - Server to connect to (optional)
+
+* `[server-id]` - Server to connect to (optional)
 
 **Options:**
-- `--kill-switch` - Enable kill switch (blocks non-VPN traffic) [Phase 3]
-- `--dns <servers>` - Override DNS servers (comma-separated IPs)
-- `--split-tunnel <cidrs>` - Only route specific networks through VPN [Phase 3]
+
+* `--kill-switch` - Enable kill switch (blocks non-VPN traffic) [Phase 3]
+* `--dns <servers>` - Override DNS servers (comma-separated IPs)
+* `--split-tunnel <cidrs>` - Only route specific networks through VPN [Phase 3]
 
 **Examples:**
 
@@ -540,9 +565,10 @@ vpn connect vpn-nbg1-a4f2 --kill-switch
 ```
 
 **Requirements:**
-- `wg-quick` must be installed
-- `sudo` access (for network configuration)
-- Server must be in "ready" state
+
+* `wg-quick` must be installed
+* `sudo` access (for network configuration)
+* Server must be in "ready" state
 
 ---
 
@@ -551,7 +577,8 @@ vpn connect vpn-nbg1-a4f2 --kill-switch
 Disconnect from the current VPN.
 
 **Options:**
-- `--force`, `-f` - Force disconnect even if errors occur
+
+* `--force`, `-f` - Force disconnect even if errors occur
 
 **Examples:**
 
@@ -584,9 +611,10 @@ vpn disconnect --force
 Show current VPN connection status.
 
 **Options:**
-- `--json` - Output JSON format
-- `--monitor` - Continuous monitoring mode (updates every 5s)
-- `--verbose`, `-v` - Show detailed network information
+
+* `--json` - Output JSON format
+* `--monitor` - Continuous monitoring mode (updates every 5s)
+* `--verbose`, `-v` - Show detailed network information
 
 **Examples:**
 
@@ -666,7 +694,8 @@ Press Ctrl+C to exit
 Disconnect and reconnect to VPN.
 
 **Options:**
-- `--server <server-id>` - Reconnect to different server
+
+* `--server <server-id>` - Reconnect to different server
 
 **Examples:**
 
@@ -689,10 +718,11 @@ Reconnecting to vpn-nyc1-8f3d...
 ```
 
 **Use cases:**
-- After app installation (to apply new DNS settings)
-- After network change (switching WiFi)
-- To refresh connection
-- To switch servers quickly
+
+* After app installation (to apply new DNS settings)
+* After network change (switching WiFi)
+* To refresh connection
+* To switch servers quickly
 
 ---
 
@@ -703,11 +733,12 @@ Reconnecting to vpn-nyc1-8f3d...
 List available apps from the catalog.
 
 **Options:**
-- `--category <category>` - Filter by category
-  - Choices: `privacy`, `dns`, `proxy`, `storage`, `management`, `monitoring`
-- `--search <query>` - Search app names and descriptions
-- `--format <table|json|yaml>` - Output format
-- `--installed` - Show only installed apps (shortcut for `vpn apps installed`)
+
+* `--category <category>` - Filter by category
+  * Choices: `privacy`, `dns`, `proxy`, `storage`, `management`, `monitoring`
+* `--search <query>` - Search app names and descriptions
+* `--format <table|json|yaml>` - Output format
+* `--installed` - Show only installed apps (shortcut for `vpn apps installed`)
 
 **Examples:**
 
@@ -758,10 +789,12 @@ vpn apps list --installed
 Show detailed information about an app.
 
 **Arguments:**
-- `<app-id>` - App identifier
+
+* `<app-id>` - App identifier
 
 **Options:**
-- `--format <text|json|yaml>` - Output format
+
+* `--format <text|json|yaml>` - Output format
 
 **Examples:**
 
@@ -825,21 +858,25 @@ Documentation:
 Install an app on your VPN server.
 
 **Arguments:**
-- `<app-id>` - App to install
+
+* `<app-id>` - App to install
 
 **Options:**
 
 **Server Selection:**
-- `--server <server-id>` - Install on specific server (default: currently connected)
+
+* `--server <server-id>` - Install on specific server (default: currently connected)
 
 **Configuration:**
-- `--config <file>` - YAML configuration file
-- `--set <key=value>` - Set config value (can be repeated)
-- `--yes`, `-y` - Use default values for all prompts
+
+* `--config <file>` - YAML configuration file
+* `--set <key=value>` - Set config value (can be repeated)
+* `--yes`, `-y` - Use default values for all prompts
 
 **Behavior:**
-- `--skip-health-check` - Don't verify app started correctly
-- `--no-reconnect` - Don't reconnect VPN after installation
+
+* `--skip-health-check` - Don't verify app started correctly
+* `--no-reconnect` - Don't reconnect VPN after installation
 
 **Examples:**
 
@@ -904,11 +941,13 @@ vpn apps install pihole --no-reconnect
 List installed apps.
 
 **Arguments:**
-- `[server-id]` - Show apps on specific server (default: all servers)
+
+* `[server-id]` - Show apps on specific server (default: all servers)
 
 **Options:**
-- `--current` - Show only apps on currently connected server
-- `--format <table|json|yaml>` - Output format
+
+* `--current` - Show only apps on currently connected server
+* `--format <table|json|yaml>` - Output format
 
 **Examples:**
 
@@ -955,13 +994,15 @@ vpn apps installed --format json
 Remove an installed app.
 
 **Arguments:**
-- `<app-id>` - App to uninstall
+
+* `<app-id>` - App to uninstall
 
 **Options:**
-- `--server <server-id>` - Uninstall from specific server (default: current)
-- `--purge` - Remove all app data and configuration
-- `--force`, `-f` - Skip confirmation
-- `--no-reconnect` - Don't reconnect VPN after uninstallation
+
+* `--server <server-id>` - Uninstall from specific server (default: current)
+* `--purge` - Remove all app data and configuration
+* `--force`, `-f` - Skip confirmation
+* `--no-reconnect` - Don't reconnect VPN after uninstallation
 
 **Examples:**
 
@@ -1007,11 +1048,13 @@ vpn apps uninstall pihole --server vpn-nyc1-8f3d
 Upgrade an app to latest version. (Phase 3 feature)
 
 **Arguments:**
-- `<app-id>` - App to upgrade
+
+* `<app-id>` - App to upgrade
 
 **Options:**
-- `--server <server-id>` - Upgrade on specific server
-- `--version <version>` - Upgrade to specific version (default: latest)
+
+* `--server <server-id>` - Upgrade on specific server
+* `--version <version>` - Upgrade to specific version (default: latest)
 
 ---
 
@@ -1020,15 +1063,17 @@ Upgrade an app to latest version. (Phase 3 feature)
 View app logs.
 
 **Arguments:**
-- `<app-id>` - App to view logs for
+
+* `<app-id>` - App to view logs for
 
 **Options:**
-- `--server <server-id>` - View logs from specific server (default: current)
-- `--follow`, `-f` - Follow logs in real-time
-- `--lines <n>`, `-n <n>` - Number of lines to show (default: 50)
-- `--since <time>` - Show logs since time (e.g., "1h", "2023-01-01")
-- `--level <level>` - Filter by log level
-  - Choices: `debug`, `info`, `warning`, `error`
+
+* `--server <server-id>` - View logs from specific server (default: current)
+* `--follow`, `-f` - Follow logs in real-time
+* `--lines <n>`, `-n <n>` - Number of lines to show (default: 50)
+* `--since <time>` - Show logs since time (e.g., "1h", "2023-01-01")
+* `--level <level>` - Filter by log level
+  * Choices: `debug`, `info`, `warning`, `error`
 
 **Examples:**
 
@@ -1069,10 +1114,12 @@ vpn apps logs pihole --since 2026-02-01
 Check app health and status.
 
 **Arguments:**
-- `<app-id>` - App to check
+
+* `<app-id>` - App to check
 
 **Options:**
-- `--server <server-id>` - Check on specific server (default: current)
+
+* `--server <server-id>` - Check on specific server (default: current)
 
 **Examples:**
 
@@ -1130,12 +1177,14 @@ Nextcloud Status on vpn-nbg1-a4f2b8c9:
 Show current app configuration.
 
 **Arguments:**
-- `<app-id>` - App to show config for
+
+* `<app-id>` - App to show config for
 
 **Options:**
-- `--server <server-id>` - Show config from specific server (default: current)
-- `--format <yaml|json>` - Output format
-- `--reveal-secrets` - Show secret values (normally hidden with ******)
+
+* `--server <server-id>` - Show config from specific server (default: current)
+* `--format <yaml|json>` - Output format
+* `--reveal-secrets` - Show secret values (normally hidden with ******)
 
 **Examples:**
 
@@ -1176,13 +1225,15 @@ vpn apps config pihole --format json
 Export app configuration to file.
 
 **Arguments:**
-- `<app-id>` - App to export
+
+* `<app-id>` - App to export
 
 **Options:**
-- `--server <server-id>` - Export from specific server
-- `--output <file>` - Output file (default: stdout)
-- `--format <yaml|json>` - Output format
-- `--include-secrets` - Include secret values in export
+
+* `--server <server-id>` - Export from specific server
+* `--output <file>` - Output file (default: stdout)
+* `--format <yaml|json>` - Output format
+* `--include-secrets` - Include secret values in export
 
 **Examples:**
 
@@ -1212,10 +1263,12 @@ done
 Import and install app from config file.
 
 **Arguments:**
-- `<config-file>` - Configuration file to import
+
+* `<config-file>` - Configuration file to import
 
 **Options:**
-- `--server <server-id>` - Install on specific server
+
+* `--server <server-id>` - Install on specific server
 
 **Examples:**
 
@@ -1235,7 +1288,8 @@ vpn apps import pihole-config.yml
 Get configuration value.
 
 **Arguments:**
-- `<key>` - Configuration key (dot notation for nested values)
+
+* `<key>` - Configuration key (dot notation for nested values)
 
 **Examples:**
 
@@ -1258,8 +1312,9 @@ vpn config get display.color
 Set configuration value.
 
 **Arguments:**
-- `<key>` - Configuration key
-- `<value>` - New value
+
+* `<key>` - Configuration key
+* `<value>` - New value
 
 **Examples:**
 
@@ -1309,8 +1364,9 @@ vpn config set advanced.log_level debug
 List all configuration settings.
 
 **Options:**
-- `--format <table|yaml|json>` - Output format
-- `--defaults` - Show only non-default values
+
+* `--format <table|yaml|json>` - Output format
+* `--defaults` - Show only non-default values
 
 **Examples:**
 
@@ -1354,7 +1410,8 @@ vpn config list --format yaml
 Reset configuration to defaults.
 
 **Options:**
-- `--force`, `-f` - Skip confirmation
+
+* `--force`, `-f` - Skip confirmation
 
 **Examples:**
 
@@ -1399,8 +1456,9 @@ vpn config edit
 Diagnose system and check requirements.
 
 **Options:**
-- `--fix` - Attempt to auto-fix issues
-- `--verbose`, `-v` - Show detailed checks
+
+* `--fix` - Attempt to auto-fix issues
+* `--verbose`, `-v` - Show detailed checks
 
 **Examples:**
 
@@ -1472,13 +1530,14 @@ vpn doctor -v
 View activity logs.
 
 **Options:**
-- `--level <level>` - Filter by log level
-  - Choices: `debug`, `info`, `warning`, `error`
-- `--component <component>` - Filter by component
-  - Choices: `pulumi`, `wireguard`, `ssh`, `apps`, `database`, `api`
-- `--lines <n>`, `-n <n>` - Number of lines (default: 50)
-- `--follow`, `-f` - Follow logs in real-time
-- `--since <time>` - Show logs since time
+
+* `--level <level>` - Filter by log level
+  * Choices: `debug`, `info`, `warning`, `error`
+* `--component <component>` - Filter by component
+  * Choices: `pulumi`, `wireguard`, `ssh`, `apps`, `database`, `api`
+* `--lines <n>`, `-n <n>` - Number of lines (default: 50)
+* `--follow`, `-f` - Follow logs in real-time
+* `--since <time>` - Show logs since time
 
 **Examples:**
 
@@ -1518,9 +1577,10 @@ vpn logs --lines 100
 Show cost estimates and usage.
 
 **Options:**
-- `--month <YYYY-MM>` - Show specific month (default: current)
-- `--breakdown` - Show per-server breakdown
-- `--format <table|json>` - Output format
+
+* `--month <YYYY-MM>` - Show specific month (default: current)
+* `--breakdown` - Show per-server breakdown
+* `--format <table|json>` - Output format
 
 **Examples:**
 
@@ -1572,7 +1632,8 @@ vpn costs --format json
 Show version and system information.
 
 **Options:**
-- `--check-update` - Check for newer version
+
+* `--check-update` - Check for newer version
 
 **Examples:**
 
@@ -1631,8 +1692,9 @@ Changelog:
 Generate shell completion script. (Phase 3 feature)
 
 **Arguments:**
-- `<shell>` - Shell type
-  - Choices: `bash`, `zsh`, `fish`, `powershell`
+
+* `<shell>` - Shell type
+  * Choices: `bash`, `zsh`, `fish`, `powershell`
 
 **Examples:**
 
@@ -1658,9 +1720,10 @@ vpn completion fish > ~/.config/fish/completions/vpn.fish
 Create SSH tunnel through VPN.
 
 **Options:**
-- `--local-port <port>` - Local port to bind
-- `--remote-host <host>` - Remote host to connect to
-- `--remote-port <port>` - Remote port
+
+* `--local-port <port>` - Local port to bind
+* `--remote-host <host>` - Remote host to connect to
+* `--remote-port <port>` - Remote port
 
 **Examples:**
 
@@ -1704,8 +1767,9 @@ Compared to direct connection:
 Migrate apps from one server to another.
 
 **Arguments:**
-- `<old-server>` - Source server ID
-- `<new-server>` - Destination server ID
+
+* `<old-server>` - Source server ID
+* `<new-server>` - Destination server ID
 
 ---
 

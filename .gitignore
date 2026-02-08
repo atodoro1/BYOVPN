@@ -1,2 +1,4 @@
 *.pem
-/client/terraform
+/client/terraform/.terraform
+__pycache__/
+.venv/
