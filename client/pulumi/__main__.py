@@ -1,11 +1,7 @@
 """An AWS Python Pulumi program"""
 
-from tokenize import group
-from turtle import pu
 from util import *
 
-import os
-import time
 import pulumi
 import pulumi_aws as aws
 
@@ -66,26 +62,18 @@ instance = aws.ec2.Instance('web-server-vpn',
 server_public_ip = instance.public_ip
 client_public_ip = get_public_ip()
 
-client_config = generate_client_config(WG_SERVER_PORT, client_private_key, 
-                                       server_public_key, server_public_ip, f"{client_public_ip}/32")
+# Generate client config using Pulumi Output.apply to handle async values
+def create_client_config(server_ip):
+    return generate_client_config(WG_SERVER_PORT, client_private_key,
+                                   server_public_key, server_ip, f"{client_public_ip}/32")
 
-with open("/etc/wireguard/client.conf", "w") as f:
-    f.write(client_config)
-
-os.chmod("/etc/wireguard/client.conf", 600)
-
-
-# Wait until the instance is running before trying to bring up the WireGuard interface
-while True:
-    instance_state = aws.ec2.get_instance(instance_id=instance.id).state
-    if instance_state == "running":
-        break
-    time.sleep(5)
-
-os.system("wg-quick up client.conf")
+client_config = server_public_ip.apply(create_client_config)
 
 
 # Export the ID of the instance
 pulumi.export('instance_id', instance.id)
 pulumi.export('publicIP', instance.public_ip)
 pulumi.export('publicHostName', instance.public_dns)
+pulumi.export('client_config', client_config)
+pulumi.export('server_private_key', server_private_key)
+pulumi.export('client_private_key', client_private_key)

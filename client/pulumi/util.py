@@ -5,7 +5,7 @@ import requests
 import subprocess
 
 
-def generate_key_pair() -> Tuple(str, str):
+def generate_key_pair() -> Tuple[str, str]:
     """Generates a WireGuard key pair using the wg command-line tool in the form (private_key, public_key)."""
     private_key = subprocess.check_output(['wg', 'genkey']).decode('utf-8').strip()
     public_key = subprocess.check_output(['wg', 'pubkey'], input=private_key.encode('utf-8')).decode('utf-8').strip()
