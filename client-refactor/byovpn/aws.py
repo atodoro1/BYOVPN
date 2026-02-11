@@ -1,10 +1,26 @@
 from util import generate_server_config, get_public_ip
 
+import boto3
+from botocore.exceptions import NoCredentialsError, ClientError
 import pulumi
 import pulumi_aws as aws
 
 
-def get_or_create_secgrp(server_port: int = 33333, allowed_ips: str = None) -> aws.ec2.SecurityGroup:
+def check_aws_login():
+    """
+    Verifies that the user has valid AWS credentials configured.
+    """
+    try:
+        sts = boto3.client("sts")
+        identity = sts.get_caller_identity()
+        return True
+    
+    except (NoCredentialsError, ClientError):
+        # NoCredentialsError: No keys found at all.
+        # ClientError: Keys found, but invalid/expired.
+        return False
+
+def get_or_create_secgrp(server_port: int, allowed_ips: str = None) -> aws.ec2.SecurityGroup:
     """Get or create a security group that allows UDP traffic on the WireGuard server port."""
     sg_name = "wg_secgrp"
     sg_tags = {
@@ -57,7 +73,7 @@ def launch_byovpn_ec2(server_port: int,
         client_ip = get_public_ip()
         allowed_ips = f"{client_ip}/32"
 
-    secgrp = get_or_create_secgrp(allowed_ips=allowed_ips)
+    secgrp = get_or_create_secgrp(server_port, allowed_ips=allowed_ips)
     
     server_config = generate_server_config(server_port, server_private_key, client_public_key)
 
@@ -88,4 +104,4 @@ def launch_byovpn_ec2(server_port: int,
                                 vpc_security_group_ids=[secgrp.id],
                                 user_data=user_data_script)
 
-    pulumi.export("public_ip", instance.public_ip
+    pulumi.export("public_ip", instance.public_ip)
