@@ -1,8 +1,6 @@
 from util import generate_server_config, get_public_ip
 
-from typing import Tuple
 import pulumi
-from pulumi import automation
 import pulumi_aws as aws
 
 
@@ -27,10 +25,10 @@ def get_or_create_secgrp(server_port: int = 33333, allowed_ips: str = None) -> a
             description="Security group for WireGuard BYOVPN server",
             tags=sg_tags,
             ingress=[{
-                "from_port": 0,
+                "from_port": server_port,
                 "to_port": server_port,
                 "protocol": "udp",
-                "cidr_blocks": [allowed_ips if allowed_ips else "0.0.0.0/0"]
+                "cidr_blocks": [allowed_ips if allowed_ips else "0.0.0.0/0"],
                 "description": "Allow WireGuard VPN traffic"
             }]
         )
@@ -40,7 +38,8 @@ def get_or_create_secgrp(server_port: int = 33333, allowed_ips: str = None) -> a
 def launch_byovpn_ec2(server_port: int,
                server_private_key: str,
                client_public_key: str,
-               fetch_client_ip: bool = False) -> Tuple[str, str]:
+               fetch_client_ip: bool = False) -> None:
+    """Launches an EC2 instance with WireGuard installed and configured, exporting the EC2's IP."""
     ubuntu = aws.ec2.get_ami(most_recent=True,
         filters=[
             {
@@ -57,7 +56,36 @@ def launch_byovpn_ec2(server_port: int,
     if fetch_client_ip:
         client_ip = get_public_ip()
         allowed_ips = f"{client_ip}/32"
-    
-    group = get_or_create_secgrp(allowed_ips=allowed_ips)
 
+    secgrp = get_or_create_secgrp(allowed_ips=allowed_ips)
+    
     server_config = generate_server_config(server_port, server_private_key, client_public_key)
+
+    # Adding the user data script to install WireGuard on the EC2 instance
+    user_data_script = f"""
+        #!/usr/bin/env bash
+        
+        apt-get update
+        apt install -y  wireguard wireguard-tools openresolv
+
+        cat << EOF > /etc/wireguard/wg0.conf
+        {server_config}
+        EOF
+
+        IFACE="$(ip route show default | awk '{{print $5; exit}}')"
+        sed -i "s/IFACE/${{IFACE}}/g" /etc/wireguard/wg0.conf
+
+        chmod 600 /etc/wireguard/wg0.conf
+
+        systemctl enable wg-quick@wg0
+        systemctl start wg-quick@wg0
+        """
+    
+    instance = aws.ec2.Instance(resource_name='byovpn_server',
+                                instance_type='t3.micro',
+                                ami=ubuntu.id,
+                                tags={'Name': 'BYOVPN_Server'},
+                                vpc_security_group_ids=[secgrp.id],
+                                user_data=user_data_script)
+
+    pulumi.export("public_ip", instance.public_ip
