@@ -20,7 +20,7 @@ def check_aws_login():
         # ClientError: Keys found, but invalid/expired.
         return False
 
-def get_or_create_secgrp(server_port: int, allowed_ips: str = None) -> aws.ec2.SecurityGroup:
+def get_or_create_secgrp(server_port: int, allowed_ips: str | None = None) -> aws.ec2.SecurityGroup:
     """Get or create a security group that allows UDP traffic on the WireGuard server port."""
     sg_name = "wg_secgrp"
     sg_tags = {
@@ -67,7 +67,7 @@ def launch_byovpn_ec2(server_port: int,
                 "values": ["hvm"],
             },
         ],
-        owners=["099720109477"])
+        owners=["099720109477"]) # Canonical's AWS account ID
     
     if fetch_client_ip:
         client_ip = get_public_ip()
@@ -83,6 +83,8 @@ def launch_byovpn_ec2(server_port: int,
         
         apt-get update
         apt install -y  wireguard wireguard-tools openresolv
+
+        sysctl -w net.ipv4.ip_forward=1
 
         cat << EOF > /etc/wireguard/wg0.conf
         {server_config}

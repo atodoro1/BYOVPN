@@ -1,9 +1,10 @@
 from aws import check_aws_login, launch_byovpn_ec2
-from util import generate_key_pair
+from util import generate_client_config, generate_key_pair, stack_destroy_and_exit
 
 import argparse
 from functools import partial
 import pulumi.automation as auto
+import os
 
 
 def main():
@@ -38,8 +39,28 @@ def main():
                                 project_name="byovpn",
                                 program=pulumi_program)
     stack.set_config("aws:region", auto.ConfigValue(value="us-east-1"))
+    up_result = stack.up(on_output=lambda out: print(f"Pulumi Output: {out}"))
 
-    stack.up(on_output=lambda out: print(f"Pulumi Output: {out}"))
+    server_ip = up_result.outputs["server_ip"].value
+    print(f"BYOVPN server launched with public IP: {server_ip}")
+
+    client_config = generate_client_config(args.port, client_private_key, server_public_key, server_ip)
+    client_config_path = "/etc/wireguard/client.conf"
+
+    if os.path.exists(client_config_path):
+        print(f"Warning: {client_config_path} already exists.")
+        read = input("Do you want to overwrite it? (y/n): ")
+        if read.lower() != "n":
+            stack_destroy_and_exit(stack, message="Aborting client configuration generation.")
+        elif read.lower() == "y":
+            print(f"Overwriting {client_config_path} with new client configuration.")
+        else:
+            stack_destroy_and_exit(stack, message="Invalid input. Aborting client configuration generation.")
+   
+    with open(client_config_path, "w") as f:
+        f.write(client_config)
+
+    print()
 
 
 

@@ -1,6 +1,6 @@
 from typing import Tuple
 from jinja2 import Template
-
+import pulumi.automation as auto
 import requests
 import subprocess
 
@@ -24,7 +24,7 @@ def generate_client_config(server_listen_port: int, client_private_key: str, ser
     return rendered
 
 
-def generate_server_config(server_listen_port: int, server_private_key: str, client_public_key: str) -> None:
+def generate_server_config(server_listen_port: int, server_private_key: str, client_public_key: str) -> str:
     """Writes the WireGuard server configuration to a file."""
     template_config = open("wg-conf/wg0.conf.j2")
     rendered = Template(template_config.read()).render({"server_listen_port": server_listen_port,
@@ -42,3 +42,11 @@ def get_public_ip() -> str:
     except requests.exceptions.RequestException as e:
         print(f"Error fetching IP: {e}")
         return None
+    
+
+def stack_destroy_and_exit(stack: auto.Stack, message: str | None = None):
+    if message:
+        print(message)
+    stack.destroy(on_output=lambda out: print(f"Pulumi Output: {out}"))
+    print("Exiting program.")
+    exit(0)
