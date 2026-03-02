@@ -1,7 +1,10 @@
 from typing import Tuple
 from jinja2 import Template
 import pulumi.automation as auto
+
+import keyring
 import requests
+import secrets
 import subprocess
 
 
@@ -50,3 +53,11 @@ def stack_destroy_and_exit(stack: auto.Stack, message: str | None = None):
     stack.destroy(on_output=lambda out: print(f"Pulumi Output: {out}"))
     print("Exiting program.")
     exit(0)
+
+def get_or_create_keyring_password(service_name: str, username: str) -> str:
+    """Retrieves a password from the keyring, or creates and stores one if it doesn't exist."""
+    password = keyring.get_password(service_name, username)
+    if password is None:
+        password = secrets.token_urlsafe(32)
+        keyring.set_password(service_name, username, password)
+    return password
