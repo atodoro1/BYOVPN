@@ -39,7 +39,8 @@ def get_or_create_secgrp(server_port: int, allowed_ips: str) -> aws.ec2.Security
             "protocol": "udp",
             "cidr_blocks": [allowed_ips],
             "description": "Allow WireGuard VPN traffic"
-        }],
+        }
+        ],
         egress=[{
             "from_port": 0,
             "to_port": 0,
@@ -56,7 +57,7 @@ def launch_byovpn_ec2(server_port: int,
                client_public_key: str,
                allowed_ips: str) -> None:
     """Launches an EC2 instance with WireGuard installed and configured, exporting the EC2's IP."""
-    ubuntu = aws.ec2.get_ami(most_recent=True,
+    debian = aws.ec2.get_ami(most_recent=True,
         filters=[
             {
                 "name": "name",
@@ -74,30 +75,24 @@ def launch_byovpn_ec2(server_port: int,
     server_config = generate_server_config(server_port, server_private_key, client_public_key)
 
     # Adding the user data script to install WireGuard on the EC2 instance
-    user_data_script = f"""
-        #!/usr/bin/env bash
-        
-        apt-get update
-        apt install -y  wireguard wireguard-tools openresolv
-
-        sysctl -w net.ipv4.ip_forward=1
-
-        cat << EOF > /etc/wireguard/wg0.conf
-        {server_config}
-        EOF
-
-        IFACE="$(ip route show default | awk '{{print $5; exit}}')"
-        sed -i "s/IFACE/${{IFACE}}/g" /etc/wireguard/wg0.conf
-
-        chmod 600 /etc/wireguard/wg0.conf
-
-        systemctl enable wg-quick@wg0
-        systemctl start wg-quick@wg0
-        """
+    user_data_script = f"""#!/usr/bin/env bash
+echo "admin:thisisthepassword" | chpasswd
+usermod -U admin
+apt-get update
+apt install -y wireguard wireguard-tools openresolv
+sysctl -w net.ipv4.ip_forward=1
+cat << EOF > /etc/wireguard/wg0.conf
+{server_config}
+EOF
+IFACE="$(ip route show default | awk '{{print $5; exit}}')"
+sed -i "s/IFACE/${{IFACE}}/g" /etc/wireguard/wg0.conf
+chmod 600 /etc/wireguard/wg0.conf
+wg-quick up wg0
+"""
     
     instance = aws.ec2.Instance(resource_name='byovpn_server',
                                 instance_type='t3.micro',
-                                ami=ubuntu.id,
+                                ami=debian.id,
                                 tags={'Name': 'BYOVPN_Server'},
                                 vpc_security_group_ids=[secgrp.id],
                                 user_data=user_data_script)

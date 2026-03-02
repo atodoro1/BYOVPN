@@ -13,6 +13,7 @@ def main():
     )
     parser.add_argument("-p", "--port", type=int, default=33333, help="Port for the WireGuard server to listen on.")
     parser.add_argument("--fetch-client-ip", action="store_true", help="Whether to fetch the client's public IP for allowed IPs.")
+    #parser.add_argument("--destroy", action="store_true", help="Destroy the BYOVPN stack instead of creating/updating it.")
     args = parser.parse_args()
 
     if not check_aws_login():

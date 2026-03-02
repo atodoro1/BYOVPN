@@ -1,5 +1,5 @@
 from typing import Tuple
-from jinja2 import Template
+from jinja2 import FileSystemLoader, Environment
 import pulumi.automation as auto
 
 import keyring
@@ -16,24 +16,29 @@ def generate_key_pair() -> Tuple[str, str]:
 
 
 def generate_client_config(server_listen_port: int, client_private_key: str, server_public_key: str,
-                        server_public_ip: str, allowed_ips: str) -> str:
-    """Writes the WireGuard client configuration to a file."""
-    template_config = open("wg-conf/client.conf.j2")
-    rendered = Template(template_config.read()).render({"server_listen_port": server_listen_port,
-                                                        "client_private_key": client_private_key,
-                                                        "server_public_key": server_public_key,
-                                                        "server_public_ip": server_public_ip,
-                                                        "allowed_ips": allowed_ips})
-    return rendered
-
+                           server_public_ip: str, allowed_ips: str) -> str:
+    """Renders and returns the WireGuard client configuration as a string."""
+    env = Environment(loader=FileSystemLoader("wg-conf"))
+    
+    template = env.get_template("client.conf.j2")
+    return template.render(
+        server_listen_port=server_listen_port,
+        client_private_key=client_private_key,
+        server_public_key=server_public_key,
+        server_public_ip=server_public_ip,
+        allowed_ips=allowed_ips
+    )
 
 def generate_server_config(server_listen_port: int, server_private_key: str, client_public_key: str) -> str:
-    """Writes the WireGuard server configuration to a file."""
-    template_config = open("wg-conf/wg0.conf.j2")
-    rendered = Template(template_config.read()).render({"server_listen_port": server_listen_port,
-                                                        "server_private_key": server_private_key,
-                                                        "client_public_key": client_public_key})
-    return rendered
+    """Renders and returns the WireGuard server configuration as a string."""
+    env = Environment(loader=FileSystemLoader("wg-conf"))
+    
+    template = env.get_template("wg0.conf.j2")
+    return template.render(
+        server_listen_port=server_listen_port,
+        server_private_key=server_private_key,
+        client_public_key=client_public_key
+    )
 
 
 def get_public_ip() -> str:
