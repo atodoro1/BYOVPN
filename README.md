@@ -1,40 +1,37 @@
-# 🚀 BYOVPN (Build Your Own VPN)
+# 🚀 BYOVPN (Bring Your Own VPN)
 
-**Own your VPN. Choose who has access to your data. Pay exactly as you go.**
+Let's be honest: paying for a commercial VPN doesn't eliminate the man-in-the-middle, it just shifts your threat model from your ISP to a third-party company. You're still forced to trust someone else's server. 
 
-Say goodbye to flat-rate monthly subscriptions and trusting third-party commercial VPN providers with your personal web traffic! BYOVPN is a powerful Infrastructure-as-Code (IaC) tool that automates the deployment of a highly secure, ephemeral WireGuard tunnel right on your own cloud infrastructure in minutes. 
+BYOVPN is built around a simple idea: you should actually own your VPN. 
 
-## ✨ Why BYOVPN?
-* **Absolute Privacy:** You hold the keys, manage the server, and control the routing. Zero third-party logging!
-* **Pay-As-You-Go:** Only pay for the compute and bandwidth you actually use while your instance is running. 
-* **Automated Provisioning:** Powered by Pulumi and Python, it seamlessly handles the cloud infrastructure and configures the WireGuard system automatically (currently defaulting to Debian environments).
-* **Dynamic Client Configs:** Your local WireGuard client configuration file is generated and ready to use the second the server comes online!
+It automates the deployment of an ephemeral WireGuard tunnel on your own cloud infrastructure. By doing this, you hold the encryption keys, you manage the server, and you control exactly how your data is routed.
+
+## 🗺️ Future Plans
+Right now, BYOVPN provisions infrastructure on AWS EC2. While AWS is reliable, it isn't an anonymous provider. 
+
+Moving forward, the roadmap includes:
+* **Logless VPS Support:** Adding backend support for privacy-respecting VPS providers that explicitly do not keep logs, giving you a truly private foundation.
+* **Multi-Peer Support:** Expanding the config generation to easily handle multiple simultaneous WireGuard clients.
 
 ## 🛠️ Prerequisites
-* [uv](https://github.com/astral-sh/uv) installed
+* [`uv`](https://github.com/astral-sh/uv) installed
 * [Pulumi CLI](https://www.pulumi.com/docs/install/) installed and authenticated
 * Cloud credentials configured locally (e.g., `aws configure`)
-* WireGuard tools (`wg`) installed locally for key generation
+* WireGuard tools (`wg`) installed locally
 
-## ⚡ Quickstart
+## ⚡ Usage
 
-Ready to spin up your private tunnel? Navigate to the project directory and execute the main orchestration script:
+Spin up your private tunnel and generate a local client config:
 
-    cd client-refactor/byovpn
-    uv run main.py
+```bash
+cd src
+uv run main.py --provider aws
+```
 
-**What happens next?** The script will automatically:
-1. Generate fresh local and remote WireGuard keypairs.
-2. Provision the cloud infrastructure and necessary security groups.
-3. Inject a user-data script to install and securely persist WireGuard on the server.
-4. Output a ready-to-use client configuration file right on your local machine. 
+## 💥 Teardown
 
-## 🚧 Beta Notice & Roadmap
+Because BYOVPN is ephemeral, you can destroy the infrastructure completely the second you are done using it:
 
-**Status: Beta**
-
-Currently, BYOVPN provisions infrastructure primarily on AWS EC2. While this is fantastic for on-demand, bursty usage, AWS data egress costs can add up if you are pushing heavy, continuous bandwidth through the tunnel. 
-
-**What's Next:**
-* **VPS Provider Support:** We are actively working on adding backend support for traditional, cost-effective VPS providers (like DigitalOcean, Hetzner, or Linode) to tap into flat-rate, high-bandwidth data pools suited for heavy, 24/7 VPN usage!
-* **Multi-Peer Support:** Expanding our templating system to manage multiple simultaneous clients with ease.
+```bash
+uv run main.py --provider aws --destroy
+```
