@@ -20,7 +20,7 @@ Say goodbye to flat-rate monthly subscriptions and trusting third-party commerci
 
 Ready to spin up your private tunnel? Navigate to the project directory and execute the main orchestration script:
 
-    cd client-refactor/byovpn
+    cd src
     uv run main.py
 
 **What happens next?** The script will automatically:
