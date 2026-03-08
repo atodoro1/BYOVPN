@@ -1,12 +1,17 @@
 # 🚀 BYOVPN (Bring Your Own VPN)
 
-Choosing a commercial VPN just shifts your threat model from your ISP to a third-party company. The whole point of BYOVPN is that you own your VPN. 
+Let's be honest: paying for a commercial VPN doesn't eliminate the man-in-the-middle, it just shifts your threat model from your ISP to a third-party company. You're still forced to trust someone else's server. 
 
-By automating the deployment of an ephemeral WireGuard tunnel on your own cloud infrastructure, you hold the keys, manage the server, and choose exactly how your data is handled.
+BYOVPN is built around a simple idea: you should actually own your VPN. 
 
-## 🚧 Status & Roadmap
-* **Current:** Provisions infrastructure on AWS EC2.
-* **Future:** Adding support for various privacy-respecting VPS providers that do not keep logs.
+It automates the deployment of an ephemeral WireGuard tunnel on your own cloud infrastructure. By doing this, you hold the encryption keys, you manage the server, and you control exactly how your data is routed.
+
+## 🗺️ Future Plans
+Right now, BYOVPN provisions infrastructure on AWS EC2. While AWS is reliable, it isn't an anonymous provider. 
+
+Moving forward, the roadmap includes:
+* **Logless VPS Support:** Adding backend support for privacy-respecting VPS providers that explicitly do not keep logs, giving you a truly private foundation.
+* **Multi-Peer Support:** Expanding the config generation to easily handle multiple simultaneous WireGuard clients.
 
 ## 🛠️ Prerequisites
 * [`uv`](https://github.com/astral-sh/uv) installed
@@ -25,7 +30,7 @@ uv run main.py --provider aws
 
 ## 💥 Teardown
 
-Destroy the infrastructure completely when you are done:
+Because BYOVPN is ephemeral, you can destroy the infrastructure completely the second you are done using it:
 
 ```bash
 uv run main.py --provider aws --destroy
