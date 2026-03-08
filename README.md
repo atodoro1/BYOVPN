@@ -1,26 +1,32 @@
 # 🚀 BYOVPN (Bring Your Own VPN)
 
-Using a commercial VPN does not eliminate the man-in-the-middle; it simply shifts your threat model from your ISP to a third-party VPN company. You are forced to trust that they do not log your traffic or sell your data. 
+Choosing a commercial VPN just shifts your threat model from your ISP to a third-party company. The whole point of BYOVPN is that you own your VPN. 
 
-BYOVPN is an Infrastructure-as-Code (IaC) tool designed to give you control over *how* you shift that threat model. By automating the deployment of an ephemeral WireGuard tunnel on your own cloud infrastructure, you own the keys, manage the server, and control the routing.
+By automating the deployment of an ephemeral WireGuard tunnel on your own cloud infrastructure, you hold the keys, manage the server, and choose exactly how your data is handled.
 
-## 🚧 Current Status & Roadmap
-
-Currently, BYOVPN uses Pulumi and Python to automatically provision infrastructure on **AWS EC2**. 
-
-While AWS is highly reliable for on-demand use, it is not an anonymous provider. Our primary roadmap goal is to integrate support for various privacy-respecting VPS providers that do not keep logs. This will allow you to deploy secure tunnels on infrastructure tailored specifically for absolute privacy and heavy bandwidth usage.
+## 🚧 Status & Roadmap
+* **Current:** Provisions infrastructure on AWS EC2.
+* **Future:** Adding support for various privacy-respecting VPS providers that do not keep logs.
 
 ## 🛠️ Prerequisites
-
-* [uv](https://github.com/astral-sh/uv) installed
+* [`uv`](https://github.com/astral-sh/uv) installed
 * [Pulumi CLI](https://www.pulumi.com/docs/install/) installed and authenticated
 * Cloud credentials configured locally (e.g., `aws configure`)
-* WireGuard tools (`wg`) installed locally for key generation
+* WireGuard tools (`wg`) installed locally
 
-## ⚡ Quickstart
+## ⚡ Usage
 
-Navigate to the source directory and execute the main orchestration script to spin up your private tunnel.
+Spin up your private tunnel and generate a local client config:
 
 ```bash
 cd src
 uv run main.py --provider aws
+```
+
+## 💥 Teardown
+
+Destroy the infrastructure completely when you are done:
+
+```bash
+uv run main.py --provider aws --destroy
+```
