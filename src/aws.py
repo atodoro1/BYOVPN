@@ -98,29 +98,3 @@ wg-quick up wg0
                                 user_data=user_data_script)
 
     pulumi.export("public_ip", instance.public_ip)
-
-def write_sudo_file(filepath : str, content : str) -> bool:
-    """
-    Writes a string to a protected file by piping it through `sudo tee`.
-    """
-    print(f"\nRequesting sudo privileges to write to {filepath}...")
-    
-    try:
-        process = subprocess.Popen(
-            ['sudo', 'tee', filepath], 
-            stdin=subprocess.PIPE, 
-            stdout=subprocess.DEVNULL, # Hides the output so it doesn't flood your terminal
-            stderr=subprocess.PIPE
-        )
-        
-        _, stderr = process.communicate(input=content.encode('utf-8'))
-        
-        if process.returncode != 0:
-            print(f"Error writing to {filepath}: {stderr.decode('utf-8').strip()}")
-            return False
-            
-        return True
-        
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return False

@@ -67,3 +67,31 @@ def get_or_create_keyring_password(service_name: str, username: str) -> str:
         password = secrets.token_urlsafe(32)
         keyring.set_password(service_name, username, password)
     return password
+
+
+def write_sudo_file(filepath : str, content : str) -> int:
+    """
+    Writes a string to a protected file by piping it through `sudo tee`.
+    Returns 0 on success, non-zero on failure.
+    """
+    print(f"\nRequesting sudo privileges to write to {filepath}...")
+    
+    try:
+        process = subprocess.Popen(
+            ['sudo', 'tee', filepath], 
+            stdin=subprocess.PIPE, 
+            stdout=subprocess.DEVNULL, # Hides the output so it doesn't flood your terminal
+            stderr=subprocess.PIPE
+        )
+        
+        _, stderr = process.communicate(input=content.encode('utf-8'))
+        
+        if process.returncode != 0:
+            print(f"Error writing to {filepath}: {stderr.decode('utf-8').strip()}")
+            return 1  # Sudo failed
+            
+        return 0  # Success
+        
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return 2  # Unexpected error
