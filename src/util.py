@@ -6,6 +6,7 @@ import keyring
 import requests
 import secrets
 import subprocess
+import sys
 
 
 def generate_key_pair() -> Tuple[str, str]:
@@ -57,7 +58,7 @@ def stack_destroy_and_exit(stack: auto.Stack, message: str | None = None):
         print(message)
     stack.destroy(on_output=lambda out: print(f"Pulumi Output: {out}"))
     print("Exiting program.")
-    exit(0)
+    sys.exit(0)
 
 def get_or_create_keyring_password(service_name: str, username: str) -> str:
     """Retrieves a password from the keyring, or creates and stores one if it doesn't exist."""

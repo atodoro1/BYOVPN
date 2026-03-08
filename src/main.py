@@ -4,6 +4,7 @@ from util import generate_client_config, generate_key_pair, get_or_create_keyrin
 import argparse
 import pulumi.automation as auto
 import os
+import sys
 
 
 def main():
@@ -13,13 +14,19 @@ def main():
     )
     parser.add_argument("-p", "--port", type=int, default=33333, help="Port for the WireGuard server to listen on.")
     parser.add_argument("--fetch-client-ip", action="store_true", help="Whether to fetch the client's public IP for allowed IPs.")
-    #parser.add_argument("--destroy", action="store_true", help="Destroy the BYOVPN stack instead of creating/updating it.")
+    parser.add_argument("--provider", type=str, help="Cloud provider to use for launching the BYOVPN server. Currently only 'aws' is supported.")
+    parser.add_argument("--destroy", action="store_true", help="Terminate the BYOVPN server.")
     args = parser.parse_args()
 
     if not check_aws_login():
         print("AWS credentials not found or invalid. Please configure your AWS credentials and try again.")
-        return
+        sys.exit(1)
 
+    if args.destroy:
+        current_user = os.getenv("USER")
+        os.environ["PULUMI_CONFIG_PASSPHRASE"] = get_or_create_keyring_password("byovpn_aws", current_user)
+        stack = auto.select_stack(stack_name="byovpn-aws", project_name="byovpn")
+        stack_destroy_and_exit(stack)
 
     client_private_key, client_public_key = generate_key_pair()
     server_private_key, server_public_key = generate_key_pair()
